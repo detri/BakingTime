@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Baking Time</string>
+    <string name="makes_x_servings">Makes {x} servings</string>
+    <string name="next_step">Next Step</string>
+    <string name="previous_step">Previous Step</string>
+    <string name="next_recipe">Next Recipe</string>
+    <string name="previous_recipe">Previous Recipe</string>
+    <string name="no_recipes">No recipes :(</string>
+</resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/ll_recipe_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/tv_recipe_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFF"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_weight="0.1"
+        tools:text="Sample Recipe" />
+
+    <TextView
+        android:id="@+id/tv_recipe_servings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#FFF"
+        android:gravity="center"
+        android:layout_weight="0.1"
+        tools:text="Makes 8 servings" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:textSize="12sp"
+        android:background="#FFF"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:id="@+id/tv_current_ingredients"
+        tools:text="Ingredients" />
+
+</LinearLayout>
