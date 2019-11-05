@@ -27,10 +27,6 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/baking_time_recipe_list_info" />
         </receiver>
-
-        <service android:name=".widgets.BakingTimeRecipeInfoWidgetService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
-            android:exported="false"/>
     </application>
 
 </manifest>

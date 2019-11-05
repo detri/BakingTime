@@ -45,13 +45,41 @@ public class RecipeStepDetailFragment extends Fragment {
     private DataSource.Factory dataSourceFactory;
     private boolean mLandscape = false;
     private boolean mTwoPane = false;
+    private long mCurrentPosition = 0;
+    private boolean mPlayWhenReady = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        recipeStepDisplayViewModel = ViewModelProviders.of(getActivity()).get(RecipeStepDisplayViewModel.class);
+        if (savedInstanceState != null) {
+            mCurrentPosition = savedInstanceState.getLong("current_position");
+            mPlayWhenReady = savedInstanceState.getBoolean("play_when_ready");
+        }
+
+        recipeStepDisplayViewModel = ViewModelProviders.of(getActivity()).get(RecipeStepDisplayViewModel.class); }
+
+    public void initPlayer() {
+        super.onStart();
         player = ExoPlayerFactory.newSimpleInstance(getContext());
         dataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "Baking Time"));
+        playerView.setPlayer(player);
+        observeSelectedStep();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initPlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || player == null)) {
+            initPlayer();
+        }
     }
 
     @Nullable
@@ -124,8 +152,10 @@ public class RecipeStepDetailFragment extends Fragment {
             }
         }
 
-        playerView.setPlayer(player);
+        return mRecipeStepDetailView;
+    }
 
+    public void observeSelectedStep() {
         recipeStepDisplayViewModel.getSelectedStep().observe(getViewLifecycleOwner(), new Observer<RecipeStep>() {
             @Override
             public void onChanged(RecipeStep recipeStep) {
@@ -148,20 +178,24 @@ public class RecipeStepDetailFragment extends Fragment {
                 }
             }
         });
-
-        return mRecipeStepDetailView;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        player.release();
+        if (player != null) {
+            mCurrentPosition = player.getCurrentPosition();
+            mPlayWhenReady = player.getPlayWhenReady();
+            player.release();
+            player = null;
+        }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.release();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putLong("current_position", mCurrentPosition);
+        outState.putBoolean("play_when_ready", mPlayWhenReady);
+        super.onSaveInstanceState(outState);
     }
 
     public void setPlayerVideo(RecipeStep recipeStep) {
@@ -176,7 +210,8 @@ public class RecipeStepDetailFragment extends Fragment {
 
         if (videoUri != null) {
             player.prepare(new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri));
-            player.setPlayWhenReady(true);
+            player.seekTo(mCurrentPosition);
+            player.setPlayWhenReady(mPlayWhenReady);
         } else {
             Log.d("Video", "No video");
         }

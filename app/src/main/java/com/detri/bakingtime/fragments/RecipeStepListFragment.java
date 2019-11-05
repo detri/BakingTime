@@ -1,5 +1,9 @@
 package com.detri.bakingtime.fragments;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +23,7 @@ import com.detri.bakingtime.models.RecipeStep;
 import com.detri.bakingtime.viewmodels.RecipeStepDisplayViewModel;
 import com.detri.bakingtime.viewmodels.RecipeStepListViewModel;
 import com.detri.bakingtime.viewmodels.RecipeStepListViewModelFactory;
+import com.detri.bakingtime.widgets.BakingTimeRecipeInfoWidgetProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +52,15 @@ public class RecipeStepListFragment extends Fragment {
                 if (recipeSteps != null) {
                     mAdapter.setRecipeSteps(recipeSteps);
                     mRecipeSteps = recipeSteps;
+
+                    RecipeStep ingredientStep = recipeSteps.get(0);
+                    Intent updateWidgetDataIntent = new Intent(getContext().getApplicationContext(), BakingTimeRecipeInfoWidgetProvider.class);
+                    updateWidgetDataIntent.setAction(BakingTimeRecipeInfoWidgetProvider.UPDATE_CURRENT_RECIPE_INGREDIENTS);
+                    updateWidgetDataIntent.putExtra("recipe_step", ingredientStep);
+                    int[] widgetIds = AppWidgetManager.getInstance(getContext().getApplicationContext()).getAppWidgetIds(new ComponentName(getContext().getApplicationContext(), BakingTimeRecipeInfoWidgetProvider.class));
+                    updateWidgetDataIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+                    updateWidgetDataIntent.setData(Uri.parse(updateWidgetDataIntent.toUri(Intent.URI_INTENT_SCHEME)));
+                    getContext().getApplicationContext().sendBroadcast(updateWidgetDataIntent);
                 }
             }
         };
